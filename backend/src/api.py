@@ -1,6 +1,9 @@
 from fastapi import APIRouter
+from fastapi import Depends
+from typing import TypedDict
 
-from src.depends import get_db, get_db_connection
+from src.agent import AgentState, Metadata, RecommendationAgent
+from src.depends import get_db_connection, get_recommendation_agent
 
 user = APIRouter(prefix="/user")
 
@@ -16,16 +19,22 @@ def create_order(user_id: str):
 
 recommendation = APIRouter(prefix="/recommendation")
 
+class RecommendationRequest(TypedDict):
+    prompt: str
+    tags: list[str]
 
-@recommendation.get("/")
-def reccomend(user_id: str, prompt: str):
-    pass
+@recommendation.post("/{user_id}")
+def recommend(user_id: str,
+              request: RecommendationRequest,
+              agent: RecommendationAgent = Depends(get_recommendation_agent)) -> list[str]:
+    state: AgentState = AgentState(user_id=user_id, message=request["prompt"], metadata=Metadata(tags=request["tags"]))
+    return agent.process(state)
 
 
 
 from fastapi import FastAPI, HTTPException, Depends
 from pydantic import BaseModel
-from typing import List
+from typing import List, TypedDict
 import sqlite3
 from datetime import datetime
 
