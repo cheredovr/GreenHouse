@@ -28,7 +28,7 @@ def get_db() -> SQLDatabase:
     return SQLDatabase.from_uri(f"sqlite:///{DB_FILENAME}")
 
 def get_llm():
-    return ChatOpenAI(model='gpt-4.1-mini', api_key=OPENAI_API_KEY, base_url='https://api.openai.com/v1')
+    return ChatOpenAI(model=LLM_MODEL, api_key=OPENAI_API_KEY, base_url='https://api.openai.com/v1')
 
 def get_recommendation_agent():
     return RecommendationAgent(get_llm(), get_db())

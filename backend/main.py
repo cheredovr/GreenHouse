@@ -2,6 +2,7 @@
 import os.path
 from fastapi import FastAPI
 
+from log import setup_logging
 from src.depends import DB_FILENAME
 from src.api import user, recommendation, dishes
 from src.db import init_db
@@ -13,6 +14,7 @@ app = FastAPI(
 
 @app.on_event("startup")
 def on_startup():
+    setup_logging()
     if not os.path.exists(DB_FILENAME):
         init_db()
 
