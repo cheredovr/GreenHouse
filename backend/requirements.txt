@@ -1,0 +1,4 @@
+fastapi
+langgraph
+langchain
+langchain_openai
